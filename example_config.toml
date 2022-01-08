@@ -1,0 +1,16 @@
+#NOTE: Save this file as config.toml or copy and fill out the contents to a file
+#with that filename for the script to work.
+
+[last_fm]
+api_key = "" #Your Last.FM API key
+profile_to_monitor = "coolaalbin" #The Last.FM profile to monitor playing status for
+poll_status_every_n_s = 60 #How many seconds to wait between polling statuses from Last.FM.
+include_recent_scrobbles = true #Use magic to tell whether a track has been scrobbled recently and include it if so in the listening status.
+recent_scrobble_threshold_seconds = 60 #The time + track duration that is added to a scrobble start time to mark it as scrobbling if the include_recent_scrobbles is enabled.
+include_last_scrobble = true #Different from include_recent_scrobbles in the way that if this is enabled, it shows the recently listened track within the configured timeframe despite if they are currently playing or not, while include_recent_scrobbles tries to guess if a track is playing and only displays playing tracks.
+last_scrobble_threshold_minutes = 60 #If include_last_scrobble, tracks as old as [this value] minutes are included.
+
+[discord]
+client_id = "" #The client ID for Discord.
+retry_failed_rpc_connections_after = 5 #How many seconds to wait between a failed connection and a retry of connecting to the Discord app.
+differentiate_magic_scrobbles_status = true #If True, statuses where a playing status can not be completely determined (a recent scrobble) will have a different status ("Playing/recently played") than tracks who are currently playing (which will have the status "Playing").

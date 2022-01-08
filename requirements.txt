@@ -1,0 +1,4 @@
+requests~=2.21.0
+toml~=0.10.2
+pypresence~=4.2.1
+pytz~=2018.9
