@@ -35,6 +35,11 @@ discord_config = config["discord"]
 discord_client_id = discord_config["client_id"]
 retry_failed_rpc_connections_after = discord_config["retry_failed_rpc_connections_after"]
 differentiate_magic_scrobbles_status = discord_config["differentiate_magic_scrobbles_status"]
+use_genres = discord_config["use_genres"]
+if use_genres:
+    genres = discord_config["genres"]
+else:
+    genres = None
 logger.info("Configuration parameters read. Looking good!")
 
 rpc = Presence(discord_client_id)
@@ -62,7 +67,7 @@ reconnect_to_discord()
 while True:
     try:
         logger.info("Polling for status from Last.FM...")
-        currently_playing_track = lfm.get_currently_playing(last_fm_profile_to_monitor,
+        currently_playing_track, currently_playing_track_info = lfm.get_currently_playing(last_fm_profile_to_monitor,
                                                             include_recently_scrobbled=last_fm_include_recent_scrobbles,
                                                             recent_scrobble_threshold_seconds=last_fm_recent_scrobble_threshold_seconds,
                                                             include_last_scrobble=last_fm_include_last_scrobble,
@@ -121,6 +126,27 @@ while True:
                     "label": "View artist",
                     "url": currently_playing_track["artist"]["url"]
                 })
+            #If using different client IDs, try to find the client ID for the track tags
+            if use_genres:
+                track_tags = currently_playing_track_info["track"]["toptags"]["tag"]
+                genre_client_id = None
+                logger.debug(f"Tags for current track: {track_tags}")
+                for tag in track_tags:
+                    tag_name = tag["name"].lower()
+                    if tag_name in genres:
+                        logger.info(f"Found relevant genre tag {tag_name} for currently playing track!")
+                        genre_client_id = genres[tag_name]
+                        break
+                if genre_client_id == None: #If no client ID for the genre was found
+                    client_id = discord_client_id
+                else:
+                    client_id = genre_client_id
+            else:
+                client_id = discord_client_id
+            #If we need to - reconnect to Discord
+            if rpc.client_id != client_id:
+                logger.info("New client ID found - reconnecting...")
+                reconnect_to_discord()
             try:
                 rpc.update(
                     state=f"{track_name} - {artist_name}",

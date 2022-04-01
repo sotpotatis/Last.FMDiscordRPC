@@ -133,8 +133,9 @@ class LastFMClient:
                     played_ago = f"{math.floor(minutes_since_last_played/60)} h"
                 #Set played_ago parameter
                 latest_scrobble["played_ago"] = played_ago
-                return latest_scrobble
+                return latest_scrobble, track_info
 
         #If we get here, we did not find a currently playing track
         logger.debug("Didn't find a currently playing track. Returning None...")
         return None
+
