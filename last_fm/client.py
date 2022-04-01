@@ -138,4 +138,3 @@ class LastFMClient:
         #If we get here, we did not find a currently playing track
         logger.debug("Didn't find a currently playing track. Returning None...")
         return None
-
